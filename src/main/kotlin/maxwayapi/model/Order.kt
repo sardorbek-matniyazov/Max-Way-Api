@@ -57,6 +57,16 @@ class Order(
     @Enumerated(EnumType.STRING)
     var status: OrderStatus = OrderStatus.ONE
 
+    constructor(
+        user: User,
+        products: MutableList<ProductItem>?,
+        allPrice: Double,
+        comment: String,
+        delivery: Delivery
+    ): this(user, products, allPrice, comment) {
+        this.type = OrderType.DELIVERY
+        this.delivery = delivery
+    }
     companion object {
         private var NUMBER_GENERATOR = 100L
     }

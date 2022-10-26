@@ -3,8 +3,10 @@ package maxwayapi.service
 import maxwayapi.dao.SuperResponse
 import maxwayapi.dto.OrderDto
 import maxwayapi.dto.OrderItemDto
+import maxwayapi.model.Delivery
 import maxwayapi.model.Order
 import maxwayapi.model.ProductItem
+import maxwayapi.model.enums.OrderType
 import maxwayapi.repository.*
 import maxwayapi.service.functionality.Creatable
 import maxwayapi.service.functionality.InstanceReturnable
@@ -25,21 +27,41 @@ class OrderService(
     override fun getAllInstances(): List<Order> = repository.findAll(Sort.by(Sort.Direction.DESC, "id"))
 
     override fun create(dto: OrderDto): SuperResponse = SuperResponse.CREATED_SUCCESSFULLY.setData(
-        userRepository.findById(dto.userId).map { it ->
+        userRepository.findById(dto.userId).map {
             if (it == null) SuperResponse.USER_NOT_FOUND
             else {
-                val createProducts = createProducts(dto.items)
-                repository.save(
-                    Order(
-                        user = it,
-                        createProducts,
-                        createProducts.stream().map { productItem ->
-                            productItem.product?.price ?: (0.0 * productItem.quantity)
-                        }.reduce { a, b -> a + b }.get(),
-                        comment = dto.comment
-                    )
+                when (dto.orderType) {
+                    OrderType.SIMPLE -> {
+                        val createProducts = createProducts(dto.allOrderValue)
+                        repository.save(
+                            Order(
+                                user = it,
+                                createProducts,
+                                createProducts.stream().map { productItem ->
+                                    productItem.product?.price ?: (0.0 * productItem.quantity)
+                                }.reduce { a, b -> a + b }.get(),
+                                comment = dto.comment
+                            )
 
-                )
+                        )
+                    }
+                    OrderType.DELIVERY -> {
+                        val createProducts = createProducts(dto.allOrderValue)
+                        deliveryRepository.save(
+                            Delivery(
+                                Order(
+                                    user = it,
+                                    createProducts,
+                                    createProducts.stream().map { productItem ->
+                                        productItem.product?.price ?: (0.0 * productItem.quantity)
+                                    }.reduce { a, b -> a + b }.get(),
+                                    comment = dto.comment
+                                )
+
+                            )
+                        )
+                    }
+                }
             }
         }
     )
