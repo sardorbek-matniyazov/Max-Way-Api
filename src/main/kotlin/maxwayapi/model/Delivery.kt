@@ -1,21 +1,27 @@
 package maxwayapi.model
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.hibernate.annotations.OnDelete
 import org.hibernate.annotations.OnDeleteAction
-import javax.persistence.CascadeType
-import javax.persistence.Entity
-import javax.persistence.FetchType
-import javax.persistence.ManyToOne
-import javax.persistence.OneToOne
+import javax.persistence.*
 
 @Entity(name = "delivery")
 class Delivery(
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @OneToOne(optional = false, fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST, CascadeType.MERGE])
-    var order: Order = Order()
-) : BaseModel() {
+    @OneToOne(cascade = [CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE])
+    var order: Order? = null,
 
+    @JsonIgnoreProperties(*["hibernateLazyInitializer", "handler"])
+    @OneToOne(
+        optional = false,
+        orphanRemoval = true,
+        cascade = [CascadeType.REMOVE, CascadeType.MERGE, CascadeType.PERSIST],
+        fetch = FetchType.LAZY
+    )
+    @JoinColumn(name = "address_id", referencedColumnName = "id")
+    var address: Address? = null
+) : BaseModel() {
     @OnDelete(action = OnDeleteAction.NO_ACTION)
     @ManyToOne
-    var deliverer: User = User()
+    var deliverer: User? = null
 }

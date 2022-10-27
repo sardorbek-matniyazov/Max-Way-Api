@@ -25,7 +25,7 @@ class CategoryServiceTest() {
     }
 
     @Test
-    fun `user findAll method testing` () {
+    fun `category findAll method testing` () {
         // given
         val categories = listOf<Category>(
             Category("Category One", "this is the first Category"),
@@ -34,10 +34,10 @@ class CategoryServiceTest() {
             Category("Category Four", "this is the fourth Category"),
             Category("Category One", "this is the first Category ever"),
         )
-        given(service!!.getAllCategories()).willReturn(categories)
+        given(service!!.getAllInstances()).willReturn(categories)
 
         // then
-        val returned = service!!.getAllCategories()
+        val returned = service!!.getAllInstances()
         assertThat(returned.size == 5)
         assertThat(returned.stream().distinct().toList().size == 1)
         assertThat(returned.filter { it.name!!.length >= 12 }.size == 2)

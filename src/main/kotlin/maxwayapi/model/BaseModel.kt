@@ -1,5 +1,7 @@
 package maxwayapi.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonInclude
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import java.sql.Timestamp
@@ -16,6 +18,7 @@ abstract class BaseModel() {
     @Column(nullable = false, updatable = false)
     var createdDate: Timestamp = Timestamp.valueOf(LocalDateTime.now())
 
+    @JsonIgnore
     @UpdateTimestamp
     var updatedDate: Timestamp = Timestamp.valueOf(LocalDateTime.now())
 

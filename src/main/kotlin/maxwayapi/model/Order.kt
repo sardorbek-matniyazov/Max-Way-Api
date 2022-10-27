@@ -10,7 +10,6 @@ import javax.persistence.*
 
 @Entity(name = "orders")
 class Order(
-
     @JsonIgnoreProperties(*["hibernateLazyInitializer", "handler"])
     @OnDelete(action = OnDeleteAction.NO_ACTION)
     @ManyToOne(optional = false)
@@ -25,11 +24,16 @@ class Order(
     val allPrice: Double = 0.0,
 
     @Column(name = "order_comment", nullable = false)
-    var comment: String = "This comment is EMPTY"
+    var comment: String = "This comment is EMPTY",
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    var type: OrderType = OrderType.SIMPLE
+
 ) : BaseModel() {
 
     init {
-        NUMBER_GENERATOR ++
+        NUMBER_GENERATOR = (Math.random()*1000L).toLong()
     }
 
     @Column(name = "order_number", nullable = false, unique = true)
@@ -38,36 +42,9 @@ class Order(
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    var type: OrderType = OrderType.SIMPLE
-
-    @JsonIgnoreProperties(*["hibernateLazyInitializer", "handler"])
-    @OneToOne(
-        mappedBy = "order",
-        orphanRemoval = true,
-        fetch = FetchType.EAGER,
-        cascade = [CascadeType.PERSIST, CascadeType.REMOVE]
-    )
-    @JoinTable(
-        name = "delivery",
-        joinColumns = [JoinColumn(name = "order_id", referencedColumnName = "id")]
-    )
-    var delivery: Delivery? = null
-
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
     var status: OrderStatus = OrderStatus.ONE
 
-    constructor(
-        user: User,
-        products: MutableList<ProductItem>?,
-        allPrice: Double,
-        comment: String,
-        delivery: Delivery
-    ): this(user, products, allPrice, comment) {
-        this.type = OrderType.DELIVERY
-        this.delivery = delivery
-    }
     companion object {
-        private var NUMBER_GENERATOR = 100L
+        private var NUMBER_GENERATOR = 120L
     }
 }

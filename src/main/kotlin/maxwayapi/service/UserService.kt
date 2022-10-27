@@ -24,11 +24,16 @@ class UserService(
     } else SuperResponse.PHONE_NUMBER_TAKEN
 
     override fun update(id: Long, dto: UserDto) = if (!repository.existsByPhoneNumberAndIdIsNot(dto.phoneNumber, id)) {
-        SuperResponse.UPDATED_SUCCESSFULLY.setData(
-            repository.findById(id).map {
-                if (it == null) SuperResponse.USER_NOT_FOUND
-                else repository.save(it.setFullNameAndPhoneNumber(dto.fullName, dto.phoneNumber))
-            }
-        )
+        repository.findById(id).map {
+            if (it == null) SuperResponse.USER_NOT_FOUND
+            else SuperResponse.UPDATED_SUCCESSFULLY.setData(
+                repository.save(
+                    it.setFullNameAndPhoneNumber(
+                        dto.fullName,
+                        dto.phoneNumber
+                    )
+                )
+            )
+        }.get()
     } else SuperResponse.PHONE_NUMBER_TAKEN
 }

@@ -22,7 +22,11 @@ class CategoryService(
     override fun getAllInstances(): List<Category> = repository.findAll(Sort.by(Sort.Direction.DESC, "id"))
 
     override fun create(dto: CategoryDto) = if (!repository.existsByName(dto.categoryName)) {
-        SuperResponse.CREATED_SUCCESSFULLY.setData(repository.save(dto.toCategoryEntity()))
+        SuperResponse.CREATED_SUCCESSFULLY.setData(
+            repository.save(
+                dto.toCategoryEntity()
+            )
+        )
     } else SuperResponse.CATEGORY_EXISTS
 
     override fun delete(id: Long): SuperResponse {
