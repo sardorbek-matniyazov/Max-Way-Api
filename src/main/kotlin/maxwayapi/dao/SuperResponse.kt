@@ -11,6 +11,8 @@ data class SuperResponse(
     var data: Any? = null
 ) {
     companion object {
+        val ALL_DATA = SuperResponse("All Data")
+        val DATA = SuperResponse("This is Data")
         val CATEGORY_NOT_FOUND = SuperResponse("Category not found", HttpStatus.BAD_REQUEST, false)
         val PRODUCT_EXISTS = SuperResponse("Product already exists", HttpStatus.BAD_REQUEST, false)
         val PRODUCT_NOT_FOUND = SuperResponse("Product not found", HttpStatus.BAD_REQUEST, false)

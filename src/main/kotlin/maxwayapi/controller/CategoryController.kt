@@ -17,12 +17,11 @@ import javax.validation.Valid
 @RestController
 @RequestMapping(value = ["api/v1/category"])
 class CategoryController(@Autowired private val service: CategoryService) {
-
     @GetMapping(value = ["/all"])
-    fun getAllCategories() = ResponseEntity.ok(service.getAllInstances())
+    fun getAllOrders() = ResponseEntity.ok(SuperResponse.ALL_DATA.setData(service.getAllInstances()))
 
     @GetMapping(value = ["/{id}"])
-    fun getCategoryWithId(@PathVariable id: Long) = ResponseEntity.ok(service.getInstanceWithId(id))
+    fun getOrderWithId(@PathVariable id: Long) = ResponseEntity.ok(SuperResponse.DATA.setData(service.getInstanceWithId(id)))
 
     @PostMapping(value = ["/create"])
     fun createCategory(@RequestBody @Valid dto: CategoryDto) = service.create(dto).handleResponse()

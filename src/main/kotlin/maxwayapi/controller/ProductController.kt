@@ -1,5 +1,6 @@
 package maxwayapi.controller
 
+import maxwayapi.dao.SuperResponse
 import maxwayapi.dto.ProductDto
 import maxwayapi.service.ProductService
 import maxwayapi.utils.extensions.handleResponse
@@ -15,10 +16,10 @@ import javax.validation.Valid
 @RequestMapping(value = ["/api/v1/product"])
 class ProductController(@Autowired private val service: ProductService) {
     @GetMapping(value = ["/all"])
-    fun getAllProduct() = ResponseEntity.ok(service.getAllInstances())
+    fun getAllOrders() = ResponseEntity.ok(SuperResponse.ALL_DATA.setData(service.getAllInstances()))
 
     @GetMapping(value = ["/{id}"])
-    fun getProductWithId(@PathVariable id: Long) = ResponseEntity.ok(service.getInstanceWithId(id))
+    fun getOrderWithId(@PathVariable id: Long) = ResponseEntity.ok(SuperResponse.DATA.setData(service.getInstanceWithId(id)))
 
     @PostMapping(value = ["/create"])
     fun createProduct(@RequestBody @Valid dto: ProductDto) = service.create(dto).handleResponse()

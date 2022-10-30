@@ -1,5 +1,6 @@
 package maxwayapi.controller
 
+import maxwayapi.dao.SuperResponse
 import maxwayapi.dto.UserDto
 import maxwayapi.service.UserService
 import maxwayapi.utils.extensions.handleResponse
@@ -15,10 +16,10 @@ import javax.validation.Valid
 @RequestMapping(value = ["/api/v1/user"])
 class UserController(@Autowired private val service: UserService) {
     @GetMapping(value = ["/all"])
-    fun getAllUsers() = ResponseEntity.ok(service.getAllInstances())
+    fun getAllOrders() = ResponseEntity.ok(SuperResponse.ALL_DATA.setData(service.getAllInstances()))
 
     @GetMapping(value = ["/{id}"])
-    fun getUserWithId(@PathVariable id: Long) = ResponseEntity.ok(service.getInstanceWithId(id))
+    fun getOrderWithId(@PathVariable id: Long) = ResponseEntity.ok(SuperResponse.DATA.setData(service.getInstanceWithId(id)))
 
     @PostMapping(value = ["/create"])
     fun createUser(@RequestBody @Valid dto: UserDto) = service.create(dto).handleResponse()
