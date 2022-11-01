@@ -26,49 +26,43 @@ class OrderService(
 
     override fun getAllInstances(): List<Order> = repository.findAll(Sort.by(Sort.Direction.DESC, "id"))
 
-    override fun create(dto: OrderDto): SuperResponse = userRepository.findById(dto.userId).map {
-        if (it == null) SuperResponse.USER_NOT_FOUND
-        else {
-            when (dto.orderType) {
-                OrderType.SIMPLE -> {
-                    val createProducts = createProducts(dto.allOrderValue)
-                    SuperResponse.CREATED_SUCCESSFULLY.setData(
-                        repository.save(
-                            Order(
-                                user = it,
-                                createProducts,
-                                createProducts.stream().map { productItem ->
-                                    (productItem.product?.price ?: 0.0) * productItem.quantity
-                                }.reduce { a, b -> a + b }.get(),
-                                comment = dto.comment
-                            )
+    override fun register(dto: OrderDto): SuperResponse =
+        when (dto.orderType) {
+            OrderType.SIMPLE -> {
+                val createProducts = createProducts(dto.allOrderValue)
+                SuperResponse.CREATED_SUCCESSFULLY.setData(
+                    repository.save(
+                        Order(
+                            createProducts,
+                            createProducts.stream().map { productItem ->
+                                (productItem.product?.price ?: 0.0) * productItem.quantity
+                            }.reduce { a, b -> a + b }.get(),
+                            comment = dto.comment
                         )
                     )
-                }
-                else -> {
-                    val createProducts = createProducts(dto.allOrderValue)
-                    SuperResponse.CREATED_SUCCESSFULLY.setData(
-                        deliveryRepository.save(
-                            Delivery(
-                                repository.save(
-                                    Order(
-                                        user = it,
-                                        createProducts,
-                                        createProducts.stream().map { productItem ->
-                                            (productItem.product?.price ?: 0.0) * productItem.quantity
-                                        }.reduce { a, b -> a + b }.get(),
-                                        comment = dto.comment,
-                                        OrderType.DELIVERY
-                                    )
-                                ),
-                                dto.address
-                            )
+                )
+            }
+            else -> {
+                val createProducts = createProducts(dto.allOrderValue)
+                SuperResponse.CREATED_SUCCESSFULLY.setData(
+                    deliveryRepository.save(
+                        Delivery(
+                            repository.save(
+                                Order(
+                                    createProducts,
+                                    createProducts.stream().map { productItem ->
+                                        (productItem.product?.price ?: 0.0) * productItem.quantity
+                                    }.reduce { a, b -> a + b }.get(),
+                                    comment = dto.comment,
+                                    OrderType.DELIVERY
+                                )
+                            ),
+                            dto.address
                         )
                     )
-                }
+                )
             }
         }
-    }.get()
 
 
     private fun createProducts(items: HashSet<OrderItemDto>) = items.filter {

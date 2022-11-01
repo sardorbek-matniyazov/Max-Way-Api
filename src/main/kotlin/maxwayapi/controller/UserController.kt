@@ -7,7 +7,6 @@ import maxwayapi.utils.extensions.handleResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
@@ -16,13 +15,14 @@ import javax.validation.Valid
 @RequestMapping(value = ["/api/v1/user"])
 class UserController(@Autowired private val service: UserService) {
     @GetMapping(value = ["/all"])
-    fun getAllOrders() = ResponseEntity.ok(SuperResponse.ALL_DATA.setData(service.getAllInstances()))
+    fun getAllOrders() = SuperResponse.ALL_DATA.setData(service.getAllInstances()).handleResponse()
 
     @GetMapping(value = ["/{id}"])
-    fun getOrderWithId(@PathVariable id: Long) = ResponseEntity.ok(SuperResponse.DATA.setData(service.getInstanceWithId(id)))
+    fun getOrderWithId(@PathVariable id: Long) =
+        SuperResponse.DATA.setData(service.getInstanceWithId(id)).handleResponse()
 
-    @PostMapping(value = ["/create"])
-    fun createUser(@RequestBody @Valid dto: UserDto) = service.create(dto).handleResponse()
+    @PostMapping(value = ["/register", "/login"])
+    fun createUser(@RequestBody @Valid dto: UserDto) = service.register(dto).handleResponse()
 
     @PutMapping(value = ["/update/{id}"])
     fun updateUser(@RequestBody @Valid dto: UserDto, @PathVariable id: Long) = service.update(id, dto).handleResponse()

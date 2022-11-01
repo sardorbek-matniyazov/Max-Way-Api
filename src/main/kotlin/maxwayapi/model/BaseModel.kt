@@ -1,14 +1,16 @@
 package maxwayapi.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonInclude
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
+import org.springframework.data.annotation.CreatedBy
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.sql.Timestamp
 import java.time.LocalDateTime
 import javax.persistence.*
 
 @MappedSuperclass
+@EntityListeners(AuditingEntityListener::class)
 abstract class BaseModel() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,4 +25,8 @@ abstract class BaseModel() {
     var updatedDate: Timestamp = Timestamp.valueOf(LocalDateTime.now())
 
     // TODO: 10/10/22 createdBy must be created in the future
+
+    @CreatedBy
+    @ManyToOne
+    val createdBy: User? = null
 }

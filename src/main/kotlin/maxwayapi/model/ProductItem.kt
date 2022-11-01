@@ -3,6 +3,7 @@ package maxwayapi.model
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.hibernate.annotations.OnDelete
 import org.hibernate.annotations.OnDeleteAction
+import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.FetchType
 import javax.persistence.ManyToOne
@@ -18,5 +19,6 @@ class ProductItem(
     )
     val product: Product? = null,
 
+    @Column(nullable = false, name = "item_quantity")
     var quantity: Int = 0
 ) : BaseModel()

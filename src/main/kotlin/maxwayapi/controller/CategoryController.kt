@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.ObjectError
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.*
@@ -16,15 +17,16 @@ import javax.validation.Valid
 
 @RestController
 @RequestMapping(value = ["api/v1/category"])
+@PreAuthorize(value = "hasAnyAuthority('USER')")
 class CategoryController(@Autowired private val service: CategoryService) {
     @GetMapping(value = ["/all"])
-    fun getAllOrders() = ResponseEntity.ok(SuperResponse.ALL_DATA.setData(service.getAllInstances()))
+    fun getAllOrders() = SuperResponse.ALL_DATA.setData(service.getAllInstances()).handleResponse()
 
     @GetMapping(value = ["/{id}"])
-    fun getOrderWithId(@PathVariable id: Long) = ResponseEntity.ok(SuperResponse.DATA.setData(service.getInstanceWithId(id)))
+    fun getOrderWithId(@PathVariable id: Long) = SuperResponse.DATA.setData(service.getInstanceWithId(id)).handleResponse()
 
     @PostMapping(value = ["/create"])
-    fun createCategory(@RequestBody @Valid dto: CategoryDto) = service.create(dto).handleResponse()
+    fun createCategory(@RequestBody @Valid dto: CategoryDto) = service.register(dto).handleResponse()
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)

@@ -36,6 +36,7 @@ class Product() : BaseModel() {
         this.imageUrl = imageUrl
         this.price = price
     }
+
     fun setCategory(category: Category): Product {
         this.category = category
         return this

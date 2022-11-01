@@ -1,8 +1,8 @@
 package maxwayapi.model.enums
 
 enum class OrderStatus {
-    ONE,
-    TWO,
-    THREE,
-    FOUR
+    ORDERED,
+    CONFIRMED,
+    ON_THE_WAY,
+    DELIVERED
 }

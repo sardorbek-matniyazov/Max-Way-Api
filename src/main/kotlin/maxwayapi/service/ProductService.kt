@@ -18,16 +18,15 @@ class ProductService(
     @Autowired private val categoryRepository: CategoryRepository
 ) : InstanceReturnable<Product>, Creatable<ProductDto>, Updatable<Long, ProductDto> {
 
-    override fun create(dto: ProductDto) =
+    override fun register(dto: ProductDto): SuperResponse =
         if (repository.existsByName(dto.name)) SuperResponse.PRODUCT_EXISTS
         else categoryRepository.findById(dto.categoryId).map {
-            if (it == null) SuperResponse.CATEGORY_NOT_FOUND
-            else SuperResponse.CREATED_SUCCESSFULLY.setData(
+            SuperResponse.CREATED_SUCCESSFULLY.setData(
                 repository.save(
                     dto.toProductEntity().setCategory(it)
                 )
             )
-        }.get()
+        }.orElse(SuperResponse.CATEGORY_NOT_FOUND)
 
     override fun getInstanceWithId(id: Long): Product = repository.findById(id).orElse(null)
 
