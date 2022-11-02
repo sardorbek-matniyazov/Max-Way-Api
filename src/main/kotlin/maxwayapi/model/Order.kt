@@ -9,7 +9,7 @@ import javax.persistence.*
 @Entity(name = "orders")
 class Order(
     @JsonIgnoreProperties(*["hibernateLazyInitializer", "handler"])
-    @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE])
+    @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE], orphanRemoval = true)
     @JoinColumn(name = "order_id", referencedColumnName = "id")
     var products: MutableList<ProductItem>? = null,
 

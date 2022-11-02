@@ -47,15 +47,13 @@ class OrderService(
                 SuperResponse.CREATED_SUCCESSFULLY.setData(
                     deliveryRepository.save(
                         Delivery(
-                            repository.save(
-                                Order(
-                                    createProducts,
-                                    createProducts.stream().map { productItem ->
-                                        (productItem.product?.price ?: 0.0) * productItem.quantity
-                                    }.reduce { a, b -> a + b }.get(),
-                                    comment = dto.comment,
-                                    OrderType.DELIVERY
-                                )
+                            Order(
+                                createProducts,
+                                createProducts.stream().map { productItem ->
+                                    (productItem.product?.price ?: 0.0) * productItem.quantity
+                                }.reduce { a, b -> a + b }.get(),
+                                comment = dto.comment,
+                                OrderType.DELIVERY
                             ),
                             dto.address
                         )
@@ -68,9 +66,7 @@ class OrderService(
     private fun createProducts(items: HashSet<OrderItemDto>) = items.filter {
         productRepository.existsById(it.productId)
     }.map {
-        productItemRepository.save(
-            ProductItem(productRepository.getReferenceById(it.productId), it.quantity)
-        )
+        ProductItem(productRepository.getReferenceById(it.productId), it.quantity)
     }.toMutableList()
 
 }
