@@ -9,8 +9,10 @@ class AuditAwareService: AuditorAware<User> {
     override fun getCurrentAuditor(): Optional<User> {
         val authentication = SecurityContextHolder.getContext().authentication
         if (
-            authentication != null && authentication.isAuthenticated
+            authentication != null
+            && authentication.isAuthenticated
+            && !authentication.principal.equals("anonymousUser")
         ) return Optional.of(authentication.principal as User)
-        return Optional.of(User())
+        return Optional.empty()
     }
 }

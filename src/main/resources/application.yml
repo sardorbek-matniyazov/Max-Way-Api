@@ -21,3 +21,4 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQL10Dialect
         format_sql: true
         enable_lazy_load_no_trans: true
+    open-in-view: false

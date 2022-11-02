@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import maxwayapi.model.enums.OrderAction
 import maxwayapi.model.enums.OrderStatus
 import maxwayapi.model.enums.OrderType
-import org.hibernate.annotations.OnDelete
-import org.hibernate.annotations.OnDeleteAction
 import javax.persistence.*
 
 @Entity(name = "orders")
@@ -28,7 +26,7 @@ class Order(
 ) : BaseModel() {
 
     init {
-        NUMBER_GENERATOR = (Math.random()*1000L).toLong()
+        NUMBER_GENERATOR = (Math.random() * 1000L).toLong()
     }
 
     @Column(nullable = false, name = "order_action")

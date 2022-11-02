@@ -1,6 +1,7 @@
 package maxwayapi.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import org.springframework.data.annotation.CreatedBy
@@ -24,9 +25,8 @@ abstract class BaseModel() {
     @UpdateTimestamp
     var updatedDate: Timestamp = Timestamp.valueOf(LocalDateTime.now())
 
-    // TODO: 10/10/22 createdBy must be created in the future
-
     @CreatedBy
-    @ManyToOne
-    val createdBy: User? = null
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(*["hibernateLazyInitializer", "handler"])
+    var createdBy: User? = null
 }
