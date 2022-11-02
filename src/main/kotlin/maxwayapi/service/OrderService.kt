@@ -6,12 +6,14 @@ import maxwayapi.dto.OrderItemDto
 import maxwayapi.model.Delivery
 import maxwayapi.model.Order
 import maxwayapi.model.ProductItem
+import maxwayapi.model.User
 import maxwayapi.model.enums.OrderType
 import maxwayapi.repository.*
 import maxwayapi.service.functionality.Creatable
 import maxwayapi.service.functionality.InstanceReturnable
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Sort
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 
 @Service
@@ -24,7 +26,7 @@ class OrderService(
 ) : InstanceReturnable<Order>, Creatable<OrderDto> {
     override fun getInstanceWithId(id: Long): Order = repository.findById(id).orElse(null)
 
-    override fun getAllInstances(): List<Order> = repository.findAll(Sort.by(Sort.Direction.DESC, "id"))
+    override fun getAllInstances(): List<Order> = repository.findAllById((SecurityContextHolder.getContext().authentication.principal as User).id, Sort.by(Sort.Direction.DESC, "id"))
 
     override fun register(dto: OrderDto): SuperResponse =
         when (dto.orderType) {
